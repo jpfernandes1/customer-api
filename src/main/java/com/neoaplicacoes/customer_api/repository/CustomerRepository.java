@@ -124,7 +124,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param state the state to search for
      * @return list of matching customers
      */
-    List<Customer> findByStateIgnoreCase(String state);
+    List<Customer> findByAddressStateIgnoreCase(String state);
 
     /**
      * Find customers by state (case-insensitive) with pagination.
@@ -133,7 +133,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param pageable page request information
      * @return paged result of customers
      */
-    Page<Customer> findByStateIgnoreCase(String state, Pageable pageable);
+    Page<Customer> findByAddressStateIgnoreCase(String state, Pageable pageable);
 
     /**
      * Find customers by city and neighborhood (case-insensitive).
@@ -141,7 +141,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param city the city to search for
      * @return list of matching customers
      */
-    List<Customer> findByCityIgnoreCaseAndNeighborhoodIgnoreCase(String city, String neighborhood);
+    List<Customer> findByAddressCityIgnoreCaseAndAddressNeighborhoodIgnoreCase(String city, String neighborhood);
 
     /**
      * Find customers by city and neighborhood (case-insensitive) with pagination.
@@ -150,5 +150,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
      * @param neighborhood the neighborhood to search for
      * @return paged result of customers
      */
-    Page<Customer> findByCityIgnoreCaseAndNeighborhoodIgnoreCase(String city, String neighborhood, Pageable pageable);
+    Page<Customer> findByAddressCityIgnoreCaseAndAddressNeighborhoodIgnoreCase(String city, String neighborhood, Pageable pageable);
 }
