@@ -47,7 +47,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
@@ -58,19 +58,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         // Public endpoints
         String[] publicEndpoints = {
                 "/auth/**",
                 "/api/users/register",
                 "/swagger-ui/**",
                 "/v3/api-docs/**"
-        };
-
-        // Admin endpoints
-        String[] adminEndpoints = {
-                "/api/users/**",
-                "/api/customers/**",
-                "/api/addresses/**"
         };
 
         // Admin PATCH endpoints (granular)
@@ -86,11 +80,16 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers(publicEndpoints).permitAll()
 
-                        // Admin endpoints
+                        // Admin-only endpoints
                         .requestMatchers(HttpMethod.PATCH, adminPatchEndpoints).hasRole("ADMIN")
-                        .requestMatchers(adminEndpoints).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/users/**").hasRole("ADMIN")
 
-                        // All other requests require authentication
+                        // Other API GET endpoints accessible by USER and ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")
+
+                        // Any other request requires authentication
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
