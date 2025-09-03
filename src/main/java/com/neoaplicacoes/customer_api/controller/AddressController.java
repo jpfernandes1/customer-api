@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,24 +33,27 @@ public class AddressController {
         this.addressService = addressService;
     }
 
-    // CRUD
-
+    // -------------------- CRUD --------------------
 
     @Operation(summary = "Create address", description = "Creates a new address")
-    @PostMapping
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AddressResponseDTO> create(@Valid @RequestBody AddressRequestDTO dto) {
         AddressResponseDTO created = addressService.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(created);
     }
 
     @Operation(summary = "Update address", description = "Updates an existing address by ID (ADMIN only)")
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AddressResponseDTO> update(
             @PathVariable Long id,
             @Valid @RequestBody AddressRequestDTO dto) {
         AddressResponseDTO updated = addressService.update(id, dto);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(updated);
     }
 
     @Operation(summary = "Delete address", description = "Deletes an address by ID (ADMIN only)")
@@ -61,112 +65,155 @@ public class AddressController {
     }
 
     @Operation(summary = "Get address by ID", description = "Retrieves an address by ID")
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AddressResponseDTO> getById(@PathVariable Long id) {
         AddressResponseDTO dto = addressService.getById(id);
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(dto);
     }
 
-    // UNPAGINATED SEARCH
-
+    // -------------------- UNPAGINATED SEARCH --------------------
 
     @Operation(summary = "Get all addresses (unpaginated)", description = "Retrieves all addresses without pagination")
-    @GetMapping("/all")
+    @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AddressResponseDTO>> getAll() {
-        return ResponseEntity.ok(addressService.getAll());
+        List<AddressResponseDTO> list = addressService.getAll();
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(list);
     }
 
-    @Operation(summary = "Search addresses by city (unpaginated)", description = "Filter addresses by city without pagination")
-    @GetMapping("/all/by-city")
+    @Operation(summary = "Search addresses by city (unpaginated)")
+    @GetMapping(value = "/all/by-city", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AddressResponseDTO>> getByCity(@RequestParam String city) {
-        return ResponseEntity.ok(addressService.getByCity(city));
+        List<AddressResponseDTO> list = addressService.getByCity(city);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(list);
     }
 
-    @Operation(summary = "Search addresses by state (unpaginated)", description = "Filter addresses by state without pagination")
-    @GetMapping("/all/by-state")
+    @Operation(summary = "Search addresses by state (unpaginated)")
+    @GetMapping(value = "/all/by-state", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AddressResponseDTO>> getByState(@RequestParam String state) {
-        return ResponseEntity.ok(addressService.getByState(state));
+        List<AddressResponseDTO> list = addressService.getByState(state);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(list);
     }
 
-    @Operation(summary = "Search addresses by neighborhood (unpaginated)", description = "Filter addresses by neighborhood without pagination")
-    @GetMapping("/all/by-neighborhood")
+    @Operation(summary = "Search addresses by neighborhood (unpaginated)")
+    @GetMapping(value = "/all/by-neighborhood", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AddressResponseDTO>> getByNeighborhood(@RequestParam String neighborhood) {
-        return ResponseEntity.ok(addressService.getByNeighborhood(neighborhood));
+        List<AddressResponseDTO> list = addressService.getByNeighborhood(neighborhood);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(list);
     }
 
-    @Operation(summary = "Search addresses by city and neighborhood (unpaginated)", description = "Filter addresses by city and neighborhood without pagination")
-    @GetMapping("/all/by-city-and-neighborhood")
+    @Operation(summary = "Search addresses by city and neighborhood (unpaginated)")
+    @GetMapping(value = "/all/by-city-and-neighborhood", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AddressResponseDTO>> getByCityAndNeighborhood(
             @RequestParam String city,
             @RequestParam String neighborhood) {
-        return ResponseEntity.ok(addressService.getByCityAndNeighborhood(city, neighborhood));
+        List<AddressResponseDTO> list = addressService.getByCityAndNeighborhood(city, neighborhood);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(list);
     }
 
-    @Operation(summary = "Search addresses by street (unpaginated)", description = "Filter addresses by street without pagination")
-    @GetMapping("/all/by-street")
+    @Operation(summary = "Search addresses by street (unpaginated)")
+    @GetMapping(value = "/all/by-street", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AddressResponseDTO>> getByStreet(@RequestParam String street) {
-        return ResponseEntity.ok(addressService.getByStreet(street));
+        List<AddressResponseDTO> list = addressService.getByStreet(street);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(list);
     }
 
-    @Operation(summary = "Search addresses by city and street (unpaginated)", description = "Filter addresses by city and street without pagination")
-    @GetMapping("/all/by-city-and-street")
+    @Operation(summary = "Search addresses by city and street (unpaginated)")
+    @GetMapping(value = "/all/by-city-and-street", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AddressResponseDTO>> getByCityAndStreet(
             @RequestParam String city,
             @RequestParam String street) {
-        return ResponseEntity.ok(addressService.getByCityAndStreet(city, street));
+        List<AddressResponseDTO> list = addressService.getByCityAndStreet(city, street);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(list);
     }
 
-    // PAGINATED SEARCH
+    // -------------------- PAGINATED SEARCH --------------------
 
-    @Operation(summary = "Get all addresses (paginated)", description = "Retrieves all addresses with pagination")
-    @GetMapping
+    @Operation(summary = "Get all addresses (paginated)")
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getAllPaged(Pageable pageable) {
-        return ResponseEntity.ok(addressService.getAllPaged(pageable));
+        Page<AddressResponseDTO> page = addressService.getAllPaged(pageable);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(page);
     }
 
     @Operation(summary = "Search addresses by city (paginated)")
-    @GetMapping("/search/by-city")
+    @GetMapping(value = "/search/by-city", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByCityPaged(
             @RequestParam String city, Pageable pageable) {
-        return ResponseEntity.ok(addressService.getByCityPaged(city, pageable));
+        Page<AddressResponseDTO> page = addressService.getByCityPaged(city, pageable);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(page);
     }
 
     @Operation(summary = "Search addresses by state (paginated)")
-    @GetMapping("/search/by-state")
+    @GetMapping(value = "/search/by-state", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByStatePaged(
             @RequestParam String state, Pageable pageable) {
-        return ResponseEntity.ok(addressService.getByStatePaged(state, pageable));
+        Page<AddressResponseDTO> page = addressService.getByStatePaged(state, pageable);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(page);
     }
 
     @Operation(summary = "Search addresses by neighborhood (paginated)")
-    @GetMapping("/search/by-neighborhood")
+    @GetMapping(value = "/search/by-neighborhood", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByNeighborhoodPaged(
             @RequestParam String neighborhood, Pageable pageable) {
-        return ResponseEntity.ok(addressService.getByNeighborhoodPaged(neighborhood, pageable));
+        Page<AddressResponseDTO> page = addressService.getByNeighborhoodPaged(neighborhood, pageable);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(page);
     }
 
     @Operation(summary = "Search addresses by city and neighborhood (paginated)")
-    @GetMapping("/search/by-city-and-neighborhood")
+    @GetMapping(value = "/search/by-city-and-neighborhood", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByCityAndNeighborhoodPaged(
             @RequestParam String city,
             @RequestParam String neighborhood,
             Pageable pageable) {
-        return ResponseEntity.ok(addressService.getByCityAndNeighborhoodPaged(city, neighborhood, pageable));
+        Page<AddressResponseDTO> page = addressService.getByCityAndNeighborhoodPaged(city, neighborhood, pageable);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(page);
     }
 
     @Operation(summary = "Search addresses by street (paginated)")
-    @GetMapping("/search/by-street")
+    @GetMapping(value = "/search/by-street", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByStreetPaged(
             @RequestParam String street, Pageable pageable) {
-        return ResponseEntity.ok(addressService.getByStreetPaged(street, pageable));
+        Page<AddressResponseDTO> page = addressService.getByStreetPaged(street, pageable);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(page);
     }
 
     @Operation(summary = "Search addresses by city and street (paginated)")
-    @GetMapping("/search/by-city-and-street")
+    @GetMapping(value = "/search/by-city-and-street", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByCityAndStreetPaged(
             @RequestParam String city,
             @RequestParam String street,
             Pageable pageable) {
-        return ResponseEntity.ok(addressService.getByCityAndStreetPaged(city, street, pageable));
+        Page<AddressResponseDTO> page = addressService.getByCityAndStreetPaged(city, street, pageable);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(page);
     }
 }
