@@ -1,9 +1,10 @@
 package com.neoaplicacoes.customer_api.mapper;
 
-import com.neoaplicacoes.customer_api.dto.request.UserRequestDTO;
-import com.neoaplicacoes.customer_api.dto.response.UserResponseDTO;
-import com.neoaplicacoes.customer_api.entity.User;
+import com.neoaplicacoes.customer_api.model.dto.request.UserRequestDTO;
+import com.neoaplicacoes.customer_api.model.dto.response.UserResponseDTO;
+import com.neoaplicacoes.customer_api.model.entity.User;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public interface UserMapper {
      * @param dto the DTO
      * @return User entity
      */
+    @Mapping(target = "active", ignore = true)
     User toEntity(UserRequestDTO dto);
 
     /**

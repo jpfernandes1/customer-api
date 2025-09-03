@@ -1,8 +1,8 @@
 package com.neoaplicacoes.customer_api.mapper;
 
-import com.neoaplicacoes.customer_api.dto.request.AddressRequestDTO;
-import com.neoaplicacoes.customer_api.dto.response.AddressResponseDTO;
-import com.neoaplicacoes.customer_api.entity.Address;
+import com.neoaplicacoes.customer_api.model.dto.request.AddressRequestDTO;
+import com.neoaplicacoes.customer_api.model.dto.response.AddressResponseDTO;
+import com.neoaplicacoes.customer_api.model.entity.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
@@ -49,4 +49,6 @@ public interface AddressMapper {
      * @param entity the existing entity to update
      */
     void updateFromDto(AddressRequestDTO dto, @MappingTarget Address entity);
+
+    void updateFromDtoPartial(AddressRequestDTO dto, @MappingTarget Address entity);
 }
