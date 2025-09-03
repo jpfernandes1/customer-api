@@ -3,12 +3,16 @@ package com.neoaplicacoes.customer_api.controller;
 import com.neoaplicacoes.customer_api.model.dto.request.AddressRequestDTO;
 import com.neoaplicacoes.customer_api.model.dto.response.AddressResponseDTO;
 import com.neoaplicacoes.customer_api.service.AddressService;
+import com.neoaplicacoes.customer_api.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -142,21 +146,43 @@ public class AddressController {
                 .body(list);
     }
 
+
     // -------------------- PAGINATED SEARCH --------------------
 
     @Operation(summary = "Get all addresses (paginated)")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<AddressResponseDTO>> getAllPaged(Pageable pageable) {
-        Page<AddressResponseDTO> page = addressService.getAllPaged(pageable);
+    public ResponseEntity<Page<AddressResponseDTO>> getAllPaged(
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
+        Page<AddressResponseDTO> pageResult = addressService.getAllPaged(pageable);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(page);
+                .body(pageResult);
     }
 
     @Operation(summary = "Search addresses by city (paginated)")
     @GetMapping(value = "/search/by-city", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByCityPaged(
-            @RequestParam String city, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String city) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         Page<AddressResponseDTO> page = addressService.getByCityPaged(city, pageable);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -166,7 +192,18 @@ public class AddressController {
     @Operation(summary = "Search addresses by state (paginated)")
     @GetMapping(value = "/search/by-state", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByStatePaged(
-            @RequestParam String state, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String state) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         Page<AddressResponseDTO> page = addressService.getByStatePaged(state, pageable);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -176,7 +213,18 @@ public class AddressController {
     @Operation(summary = "Search addresses by neighborhood (paginated)")
     @GetMapping(value = "/search/by-neighborhood", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByNeighborhoodPaged(
-            @RequestParam String neighborhood, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String neighborhood) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         Page<AddressResponseDTO> page = addressService.getByNeighborhoodPaged(neighborhood, pageable);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -186,9 +234,19 @@ public class AddressController {
     @Operation(summary = "Search addresses by city and neighborhood (paginated)")
     @GetMapping(value = "/search/by-city-and-neighborhood", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByCityAndNeighborhoodPaged(
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort,
+
             @RequestParam String city,
-            @RequestParam String neighborhood,
-            Pageable pageable) {
+            @RequestParam String neighborhood) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         Page<AddressResponseDTO> page = addressService.getByCityAndNeighborhoodPaged(city, neighborhood, pageable);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -198,7 +256,18 @@ public class AddressController {
     @Operation(summary = "Search addresses by street (paginated)")
     @GetMapping(value = "/search/by-street", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByStreetPaged(
-            @RequestParam String street, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String street) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         Page<AddressResponseDTO> page = addressService.getByStreetPaged(street, pageable);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -208,9 +277,19 @@ public class AddressController {
     @Operation(summary = "Search addresses by city and street (paginated)")
     @GetMapping(value = "/search/by-city-and-street", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<AddressResponseDTO>> getByCityAndStreetPaged(
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort,
+
             @RequestParam String city,
-            @RequestParam String street,
-            Pageable pageable) {
+            @RequestParam String street) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         Page<AddressResponseDTO> page = addressService.getByCityAndStreetPaged(city, street, pageable);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

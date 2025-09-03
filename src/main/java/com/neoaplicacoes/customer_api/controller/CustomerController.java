@@ -4,11 +4,14 @@ import com.neoaplicacoes.customer_api.model.dto.request.CustomerRequestDTO;
 import com.neoaplicacoes.customer_api.model.dto.response.CustomerResponseDTO;
 import com.neoaplicacoes.customer_api.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,52 +74,141 @@ public class CustomerController {
 
     @Operation(summary = "Get all customers (paginated)", description = "Retrieves all customers with pagination")
     @GetMapping
-    public ResponseEntity<Page<CustomerResponseDTO>> getAllPaged(Pageable pageable) {
+    public ResponseEntity<Page<CustomerResponseDTO>> getAllPaged(
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "name,asc")
+            @RequestParam(required = false) String sort) {
+
+        Pageable pageable = createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(customerService.getAllPaged(pageable));
     }
 
     @Operation(summary = "Search customers by name (paginated)", description = "Finds customers by name with pagination")
     @GetMapping("/search/by-name")
     public ResponseEntity<Page<CustomerResponseDTO>> getByNamePaged(
-            @RequestParam String name, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "name,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String name) {
+
+        Pageable pageable = createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(customerService.getByNamePaged(name, pageable));
     }
 
     @Operation(summary = "Search customers by email (paginated)", description = "Finds customers by email with pagination")
     @GetMapping("/search/by-email")
     public ResponseEntity<Page<CustomerResponseDTO>> getByEmailPaged(
-            @RequestParam String email, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "email,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String email) {
+
+        Pageable pageable = createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(customerService.getByEmailPaged(email, pageable));
     }
 
     @Operation(summary = "Search customers by CPF (paginated)", description = "Finds customers by CPF with pagination")
     @GetMapping("/search/by-cpf")
     public ResponseEntity<Page<CustomerResponseDTO>> getByCpfPaged(
-            @RequestParam String cpf, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "name,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String cpf) {
+
+        Pageable pageable = createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(customerService.getByCpfPaged(cpf, pageable));
     }
 
     @Operation(summary = "Search customers by city (paginated)", description = "Finds customers by city with pagination")
     @GetMapping("/search/by-city")
     public ResponseEntity<Page<CustomerResponseDTO>> getByCityPaged(
-            @RequestParam String city, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String city) {
+
+        Pageable pageable = createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(customerService.getByCityPaged(city, pageable));
     }
 
     @Operation(summary = "Search customers by state (paginated)", description = "Finds customers by state with pagination")
     @GetMapping("/search/by-state")
     public ResponseEntity<Page<CustomerResponseDTO>> getByStatePaged(
-            @RequestParam String state, Pageable pageable) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "state,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String state) {
+
+        Pageable pageable = createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(customerService.getByStatePaged(state, pageable));
     }
 
     @Operation(summary = "Search customers by city and neighborhood (paginated)", description = "Finds customers by city and neighborhood with pagination")
     @GetMapping("/search/by-city-and-neighborhood")
     public ResponseEntity<Page<CustomerResponseDTO>> getByCityAndNeighborhoodPaged(
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "city,asc")
+            @RequestParam(required = false) String sort,
+
             @RequestParam String city,
-            @RequestParam String neighborhood,
-            Pageable pageable) {
+            @RequestParam String neighborhood) {
+
+        Pageable pageable = createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(customerService.getByCityAndNeighborhoodPaged(city, neighborhood, pageable));
+    }
+
+    // Utility method to create Pageable
+    private Pageable createPageable(int pageNumber, int size, String sort) {
+        if (sort != null && !sort.trim().isEmpty()) {
+            String[] sortParams = sort.split(",");
+            if (sortParams.length == 2) {
+                Sort.Direction direction = sortParams[1].equalsIgnoreCase("desc")
+                        ? Sort.Direction.DESC
+                        : Sort.Direction.ASC;
+                return PageRequest.of(pageNumber, size, Sort.by(direction, sortParams[0]));
+            }
+        }
+        return PageRequest.of(pageNumber, size);
     }
 
     // UNPAGINATED ENDPOINTS
