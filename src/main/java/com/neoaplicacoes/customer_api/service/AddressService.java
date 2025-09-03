@@ -46,140 +46,38 @@ public interface AddressService {
     AddressResponseDTO getById(Long id);
 
     /**
-     * List all addresses.
+     * List all addresses without pagination.
      *
      * @return list of address responses
      */
     List<AddressResponseDTO> getAll();
 
-    // =========================
+    /**
+     * List all addresses with pagination.
+     *
+     * @param pageable pagination information
+     * @return paged result of addresses
+     */
+    Page<AddressResponseDTO> getAllPaged(Pageable pageable);
+
     // Filters without pagination
-    // =========================
 
-    /**
-     * Find addresses by city (case-insensitive).
-     *
-     * @param city the city to filter
-     * @return list of address responses
-     */
     List<AddressResponseDTO> getByCity(String city);
-
-    /**
-     * Find addresses by state (case-insensitive).
-     *
-     * @param state the state to filter
-     * @return list of address responses
-     */
     List<AddressResponseDTO> getByState(String state);
-
-    /**
-     * Find addresses by neighborhood (case-insensitive).
-     *
-     * @param neighborhood the neighborhood to filter
-     * @return list of address responses
-     */
     List<AddressResponseDTO> getByNeighborhood(String neighborhood);
-
-    /**
-     * Find addresses by city and neighborhood (case-insensitive).
-     *
-     * @param city         the city to filter
-     * @param neighborhood the neighborhood to filter
-     * @return list of address responses
-     */
     List<AddressResponseDTO> getByCityAndNeighborhood(String city, String neighborhood);
-
-    /**
-     * Find addresses by postal code.
-     *
-     * @param cep the postal code
-     * @return list of address responses
-     */
     List<AddressResponseDTO> getByCep(String cep);
-
-    /**
-     * Find addresses by postal code and state (case-insensitive).
-     *
-     * @param cep   the postal code
-     * @param state the state to filter
-     * @return list of address responses
-     */
     List<AddressResponseDTO> getByCepAndState(String cep, String state);
-
-    /**
-     * Find addresses containing street (case-insensitive).
-     *
-     * @param street the street to filter
-     * @return list of address responses
-     */
     List<AddressResponseDTO> getByStreet(String street);
-
-    /**
-     * Find addresses by city and containing street (case-insensitive).
-     *
-     * @param city   the city to filter
-     * @param street the street to filter
-     * @return list of address responses
-     */
     List<AddressResponseDTO> getByCityAndStreet(String city, String street);
 
-    // =========================
+
     // Filters with pagination
-    // =========================
 
-    /**
-     * Find addresses by city (case-insensitive) with pagination.
-     *
-     * @param city     the city to filter
-     * @param pageable pagination information
-     * @return paged result of addresses
-     */
     Page<AddressResponseDTO> getByCityPaged(String city, Pageable pageable);
-
-    /**
-     * Find addresses by state (case-insensitive) with pagination.
-     *
-     * @param state    the state to filter
-     * @param pageable pagination information
-     * @return paged result of addresses
-     */
     Page<AddressResponseDTO> getByStatePaged(String state, Pageable pageable);
-
-    /**
-     * Find addresses by neighborhood (case-insensitive) with pagination.
-     *
-     * @param neighborhood the neighborhood to filter
-     * @param pageable     pagination information
-     * @return paged result of addresses
-     */
     Page<AddressResponseDTO> getByNeighborhoodPaged(String neighborhood, Pageable pageable);
-
-    /**
-     * Find addresses by city and neighborhood (case-insensitive) with pagination.
-     *
-     * @param city         the city to filter
-     * @param neighborhood the neighborhood to filter
-     * @param pageable     pagination information
-     * @return paged result of addresses
-     */
     Page<AddressResponseDTO> getByCityAndNeighborhoodPaged(String city, String neighborhood, Pageable pageable);
-
-    /**
-     * Find addresses containing street (case-insensitive) with pagination.
-     *
-     * @param street   the street to filter
-     * @param pageable pagination information
-     * @return paged result of addresses
-     */
     Page<AddressResponseDTO> getByStreetPaged(String street, Pageable pageable);
-
-    /**
-     * Find addresses by city and containing street (case-insensitive) with pagination.
-     *
-     * @param city     the city to filter
-     * @param street   the street to filter
-     * @param pageable pagination information
-     * @return paged result of addresses
-     */
     Page<AddressResponseDTO> getByCityAndStreetPaged(String city, String street, Pageable pageable);
 }

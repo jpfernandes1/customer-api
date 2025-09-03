@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
         User existing = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
 
-        // Atualização parcial dos campos administrativos
+        // Allows partial update
         updateAdminFields(dto, existing);
 
         User updated = userRepository.save(existing);
@@ -158,7 +158,7 @@ public class UserServiceImpl implements UserService {
 
     private void updateAdminFields(UserAdminRequestDTO dto, User entity) {
         if (dto.role() != null) {
-            entity.setRole(dto.role());
+            entity.setRole(dto.role().name()); // converts enum to string for db
         }
         if (dto.active() != null) {
             entity.setActive(dto.active());
