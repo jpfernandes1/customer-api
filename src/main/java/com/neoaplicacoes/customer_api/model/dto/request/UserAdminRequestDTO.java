@@ -1,10 +1,10 @@
 package com.neoaplicacoes.customer_api.model.dto.request;
 
 import com.neoaplicacoes.customer_api.model.enums.Role;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotNull;
 
 public record UserAdminRequestDTO(
-        @Pattern(regexp = "ROLE_USER|ROLE_ADMIN", message = "Role must be either ROLE_USER or ROLE_ADMIN")
+        @NotNull(message = "Role must not be null")
         Role role,
         Boolean active
 ) {}
