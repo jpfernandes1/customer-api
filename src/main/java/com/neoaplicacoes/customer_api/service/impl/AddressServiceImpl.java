@@ -6,12 +6,12 @@ import com.neoaplicacoes.customer_api.model.entity.Address;
 import com.neoaplicacoes.customer_api.mapper.AddressMapper;
 import com.neoaplicacoes.customer_api.repository.AddressRepository;
 import com.neoaplicacoes.customer_api.service.AddressService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 
 /**
@@ -30,7 +30,8 @@ public class AddressServiceImpl implements AddressService {
         this.addressMapper = addressMapper;
     }
 
-    // CRUD methods
+    // CRUD METHODS
+
 
     @Override
     public AddressResponseDTO create(AddressRequestDTO dto) {
@@ -49,27 +50,13 @@ public class AddressServiceImpl implements AddressService {
     }
 
     private void updateAddressPartial(AddressRequestDTO dto, Address entity) {
-        if (dto.cep() != null) {
-            entity.setCep(dto.cep());
-        }
-        if (dto.number() != null) {
-            entity.setNumber(dto.number());
-        }
-        if (dto.complement() != null) {
-            entity.setComplement(dto.complement());
-        }
-        if (dto.street() != null) {
-            entity.setStreet(dto.street());
-        }
-        if (dto.neighborhood() != null) {
-            entity.setNeighborhood(dto.neighborhood());
-        }
-        if (dto.city() != null) {
-            entity.setCity(dto.city());
-        }
-        if (dto.state() != null) {
-            entity.setState(dto.state());
-        }
+        if (dto.cep() != null) entity.setCep(dto.cep());
+        if (dto.number() != null) entity.setNumber(dto.number());
+        if (dto.complement() != null) entity.setComplement(dto.complement());
+        if (dto.street() != null) entity.setStreet(dto.street());
+        if (dto.neighborhood() != null) entity.setNeighborhood(dto.neighborhood());
+        if (dto.city() != null) entity.setCity(dto.city());
+        if (dto.state() != null) entity.setState(dto.state());
     }
 
     @Override
@@ -91,7 +78,20 @@ public class AddressServiceImpl implements AddressService {
         return addressMapper.toResponseList(addressRepository.findAll());
     }
 
-    // Filters without pagination
+    /**
+     * Retrieves all addresses with pagination.
+     *
+     * @param pageable pagination information
+     * @return paged result of addresses
+     */
+    @Override
+    public Page<AddressResponseDTO> getAllPaged(Pageable pageable) {
+        return addressRepository.findAll(pageable)
+                .map(addressMapper::toResponse);
+    }
+
+
+    // FILTERS WITHOUT PAGINATION
 
     @Override
     public List<AddressResponseDTO> getByCity(String city) {
@@ -110,9 +110,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressResponseDTO> getByCityAndNeighborhood(String city, String neighborhood) {
-        return addressMapper.toResponseList(
-                addressRepository.findByCityIgnoreCaseAndNeighborhoodIgnoreCase(city, neighborhood)
-        );
+        return addressMapper.toResponseList(addressRepository.findByCityIgnoreCaseAndNeighborhoodIgnoreCase(city, neighborhood));
     }
 
     @Override
@@ -135,12 +133,11 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressResponseDTO> getByCityAndStreet(String city, String street) {
-        return addressMapper.toResponseList(
-                addressRepository.findByCityIgnoreCaseAndStreetContainingIgnoreCase(city, street)
-        );
+        return addressMapper.toResponseList(addressRepository.findByCityIgnoreCaseAndStreetContainingIgnoreCase(city, street));
     }
 
-    // Filters with pagination
+    // FILTERS WITH PAGINATION
+
 
     @Override
     public Page<AddressResponseDTO> getByCityPaged(String city, Pageable pageable) {

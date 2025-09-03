@@ -7,14 +7,19 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * REST controller for managing Customers.
- * Provides CRUD operations with role-based security and OpenAPI documentation.
+ * Provides CRUD operations, filtering, and both paginated and non-paginated endpoints.
+ * Includes role-based security and OpenAPI documentation.
  */
 @RestController
 @RequestMapping("/api/customers")
@@ -28,6 +33,8 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    // CRUD BASE
+
     @Operation(summary = "Create customer", description = "Creates a new customer")
     @PostMapping
     public ResponseEntity<CustomerResponseDTO> create(@Valid @RequestBody CustomerRequestDTO dto) {
@@ -40,8 +47,7 @@ public class CustomerController {
     @PutMapping("/{id}")
     public ResponseEntity<CustomerResponseDTO> update(
             @PathVariable Long id,
-            @Valid @RequestBody CustomerRequestDTO dto
-    ) {
+            @Valid @RequestBody CustomerRequestDTO dto) {
         CustomerResponseDTO updated = customerService.update(id, dto);
         return ResponseEntity.ok(updated);
     }
@@ -61,4 +67,102 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
+    // PAGINATED ENDPOINTS
+
+    @Operation(summary = "Get all customers (paginated)", description = "Retrieves all customers with pagination")
+    @GetMapping
+    public ResponseEntity<Page<CustomerResponseDTO>> getAllPaged(Pageable pageable) {
+        return ResponseEntity.ok(customerService.getAllPaged(pageable));
+    }
+
+    @Operation(summary = "Search customers by name (paginated)", description = "Finds customers by name with pagination")
+    @GetMapping("/search/by-name")
+    public ResponseEntity<Page<CustomerResponseDTO>> getByNamePaged(
+            @RequestParam String name, Pageable pageable) {
+        return ResponseEntity.ok(customerService.getByNamePaged(name, pageable));
+    }
+
+    @Operation(summary = "Search customers by email (paginated)", description = "Finds customers by email with pagination")
+    @GetMapping("/search/by-email")
+    public ResponseEntity<Page<CustomerResponseDTO>> getByEmailPaged(
+            @RequestParam String email, Pageable pageable) {
+        return ResponseEntity.ok(customerService.getByEmailPaged(email, pageable));
+    }
+
+    @Operation(summary = "Search customers by CPF (paginated)", description = "Finds customers by CPF with pagination")
+    @GetMapping("/search/by-cpf")
+    public ResponseEntity<Page<CustomerResponseDTO>> getByCpfPaged(
+            @RequestParam String cpf, Pageable pageable) {
+        return ResponseEntity.ok(customerService.getByCpfPaged(cpf, pageable));
+    }
+
+    @Operation(summary = "Search customers by city (paginated)", description = "Finds customers by city with pagination")
+    @GetMapping("/search/by-city")
+    public ResponseEntity<Page<CustomerResponseDTO>> getByCityPaged(
+            @RequestParam String city, Pageable pageable) {
+        return ResponseEntity.ok(customerService.getByCityPaged(city, pageable));
+    }
+
+    @Operation(summary = "Search customers by state (paginated)", description = "Finds customers by state with pagination")
+    @GetMapping("/search/by-state")
+    public ResponseEntity<Page<CustomerResponseDTO>> getByStatePaged(
+            @RequestParam String state, Pageable pageable) {
+        return ResponseEntity.ok(customerService.getByStatePaged(state, pageable));
+    }
+
+    @Operation(summary = "Search customers by city and neighborhood (paginated)", description = "Finds customers by city and neighborhood with pagination")
+    @GetMapping("/search/by-city-and-neighborhood")
+    public ResponseEntity<Page<CustomerResponseDTO>> getByCityAndNeighborhoodPaged(
+            @RequestParam String city,
+            @RequestParam String neighborhood,
+            Pageable pageable) {
+        return ResponseEntity.ok(customerService.getByCityAndNeighborhoodPaged(city, neighborhood, pageable));
+    }
+
+    // UNPAGINATED ENDPOINTS
+
+
+    @Operation(summary = "Get all customers (unpaginated)", description = "Retrieves all customers without pagination")
+    @GetMapping("/all")
+    public ResponseEntity<List<CustomerResponseDTO>> getAll() {
+        return ResponseEntity.ok(customerService.getAll());
+    }
+
+    @Operation(summary = "Search customers by name (unpaginated)", description = "Finds customers by name without pagination")
+    @GetMapping("/all/by-name")
+    public ResponseEntity<List<CustomerResponseDTO>> getByName(@RequestParam String name) {
+        return ResponseEntity.ok(customerService.getByName(name));
+    }
+
+    @Operation(summary = "Search customers by email (unpaginated)", description = "Finds customers by email without pagination")
+    @GetMapping("/all/by-email")
+    public ResponseEntity<List<CustomerResponseDTO>> getByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(customerService.getByEmail(email));
+    }
+
+    @Operation(summary = "Search customers by CPF (unpaginated)", description = "Finds customers by CPF without pagination")
+    @GetMapping("/all/by-cpf")
+    public ResponseEntity<List<CustomerResponseDTO>> getByCpf(@RequestParam String cpf) {
+        return ResponseEntity.ok(customerService.getByCpf(cpf));
+    }
+
+    @Operation(summary = "Search customers by city (unpaginated)", description = "Finds customers by city without pagination")
+    @GetMapping("/all/by-city")
+    public ResponseEntity<List<CustomerResponseDTO>> getByCity(@RequestParam String city) {
+        return ResponseEntity.ok(customerService.getByCity(city));
+    }
+
+    @Operation(summary = "Search customers by state (unpaginated)", description = "Finds customers by state without pagination")
+    @GetMapping("/all/by-state")
+    public ResponseEntity<List<CustomerResponseDTO>> getByState(@RequestParam String state) {
+        return ResponseEntity.ok(customerService.getByState(state));
+    }
+
+    @Operation(summary = "Search customers by city and neighborhood (unpaginated)", description = "Finds customers by city and neighborhood without pagination")
+    @GetMapping("/all/by-city-and-neighborhood")
+    public ResponseEntity<List<CustomerResponseDTO>> getByCityAndNeighborhood(
+            @RequestParam String city,
+            @RequestParam String neighborhood) {
+        return ResponseEntity.ok(customerService.getByCityAndNeighborhood(city, neighborhood));
+    }
 }
