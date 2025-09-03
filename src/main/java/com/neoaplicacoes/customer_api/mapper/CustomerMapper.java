@@ -1,8 +1,8 @@
 package com.neoaplicacoes.customer_api.mapper;
 
-import com.neoaplicacoes.customer_api.dto.request.CustomerRequestDTO;
-import com.neoaplicacoes.customer_api.dto.response.CustomerResponseDTO;
-import com.neoaplicacoes.customer_api.entity.Customer;
+import com.neoaplicacoes.customer_api.model.dto.request.CustomerRequestDTO;
+import com.neoaplicacoes.customer_api.model.dto.response.CustomerResponseDTO;
+import com.neoaplicacoes.customer_api.model.entity.Customer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

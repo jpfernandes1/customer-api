@@ -1,6 +1,6 @@
 package com.neoaplicacoes.customer_api.repository;
 
-import com.neoaplicacoes.customer_api.entity.Customer;
+import com.neoaplicacoes.customer_api.model.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
