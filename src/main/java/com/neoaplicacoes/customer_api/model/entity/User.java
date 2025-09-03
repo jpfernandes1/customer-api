@@ -1,4 +1,4 @@
-package com.neoaplicacoes.customer_api.entity;
+package com.neoaplicacoes.customer_api.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -1,4 +1,4 @@
-package com.neoaplicacoes.customer_api.dto.request;
+package com.neoaplicacoes.customer_api.model.dto.request;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;

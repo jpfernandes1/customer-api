@@ -1,4 +1,4 @@
-package com.neoaplicacoes.customer_api.dto.request;
+package com.neoaplicacoes.customer_api.model.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,14 +11,6 @@ public record UserRequestDTO(
 
         @NotBlank(message = "Senha é obrigatória")
         @Size(min = 6, message = "Senha deve ter no mínimo 6 caracteres")
-        String password,
+        String password
 
-        String role
-) {
-    public UserRequestDTO {
-        // Valor padrão para role se não informado
-        if (role == null || role.isBlank()) {
-            role = "ROLE_USER";
-        }
-    }
-}
+) {}

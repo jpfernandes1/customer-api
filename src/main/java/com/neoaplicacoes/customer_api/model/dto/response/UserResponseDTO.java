@@ -1,4 +1,4 @@
-package com.neoaplicacoes.customer_api.dto.response;
+package com.neoaplicacoes.customer_api.model.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;

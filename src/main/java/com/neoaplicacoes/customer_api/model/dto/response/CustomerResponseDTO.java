@@ -1,4 +1,4 @@
-package com.neoaplicacoes.customer_api.dto.response;
+package com.neoaplicacoes.customer_api.model.dto.response;
 
 import java.time.LocalDate;
 
