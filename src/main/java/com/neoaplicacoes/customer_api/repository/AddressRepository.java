@@ -1,6 +1,6 @@
 package com.neoaplicacoes.customer_api.repository;
 
-import com.neoaplicacoes.customer_api.entity.Address;
+import com.neoaplicacoes.customer_api.model.entity.Address;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,9 +16,7 @@ import java.util.Optional;
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
-    // =========================
     // Basic lookup methods
-    // =========================
 
     /**
      * Find an address by its postal code.
@@ -38,9 +36,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
      */
     Optional<Address> findByCepAndStreetAndNumber(String cep, String street, String number);
 
-    // =========================
     // Common filters
-    // =========================
 
     /**
      * Find addresses by city (case-insensitive).
