@@ -5,6 +5,7 @@ import com.neoaplicacoes.customer_api.model.dto.response.UserResponseDTO;
 import com.neoaplicacoes.customer_api.security.util.JwtUtils;
 import com.neoaplicacoes.customer_api.security.service.CustomUserDetailsService;
 import com.neoaplicacoes.customer_api.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Auth", description = "Login request")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
