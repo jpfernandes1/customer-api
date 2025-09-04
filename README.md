@@ -42,12 +42,31 @@ Esta API foi desenvolvida seguindo os princípios RESTful e as melhores prática
 git clone https://github.com/jpfernandes1/customer-api.git
 cd customer-api
 ```
-### 2. Crie um banco de dados
+
+
+### A. Com Docker
+
+Pré-requisito: Docker Desktop instalado e configurado.
+
+```bash
+# Subir toda a stack (app + PostgreSQL)
+docker-compose up -d
+
+# Parar a stack
+docker-compose down
+```
+
+##  B. Sem Docker
+
+Pré-requisito: PgAdmin instalado e configurado
+
+
+### 1. Crie um banco de dados
 
 No postgres local, crie um banco de dados conforme configurações em `application-local.yml`.
 
 
-### 3. Execute a API com o Maven
+### 2. Execute a API com o Maven
 
 Executar aplicação:
 
@@ -58,15 +77,7 @@ mvn spring-boot:run
 # Executar com perfil de desenvolvimento
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
-### 4. Ou execute com Docker
 
-```bash
-# Subir toda a stack (app + PostgreSQL)
-docker-compose up -d
-
-# Parar a stack
-docker-compose down
-```
 
 ## 🧪 Testes
 ```bash
