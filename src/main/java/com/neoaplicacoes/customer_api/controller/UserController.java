@@ -4,7 +4,9 @@ import com.neoaplicacoes.customer_api.model.dto.request.UserAdminRequestDTO;
 import com.neoaplicacoes.customer_api.model.dto.request.UserRequestDTO;
 import com.neoaplicacoes.customer_api.model.dto.response.UserResponseDTO;
 import com.neoaplicacoes.customer_api.service.UserService;
+import com.neoaplicacoes.customer_api.util.PaginationUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,24 +116,42 @@ public class UserController {
         return ResponseEntity.ok(userService.getByActive(active));
     }
 
-    // Paginated Endpoints
-    @Operation(summary = "Find users by email (paginated)")
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/search/by-email")
-    public ResponseEntity<Page<UserResponseDTO>> getByEmailPaged(
-            @RequestParam String email,
-            Pageable pageable
-    ) {
-        return ResponseEntity.ok(userService.getByEmailPaged(email, pageable));
-    }
+        // Paginated Endpoints
+        @Operation(summary = "Find users by email (paginated)")
+        @PreAuthorize("hasRole('ADMIN')")
+        @GetMapping("/search/by-email")
+        public ResponseEntity<Page<UserResponseDTO>> getByEmailPaged(
+                @Parameter(description = "Page number (0-based)", example = "0")
+                @RequestParam(defaultValue = "0") int pageNumber,
+
+                @Parameter(description = "Number of items per page", example = "10")
+                @RequestParam(defaultValue = "10") int size,
+
+                @Parameter(description = "Sorting criteria: property,asc|desc", example = "email,asc")
+                @RequestParam(required = false) String sort,
+
+                @RequestParam String email) {
+
+            Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
+            return ResponseEntity.ok(userService.getByEmailPaged(email, pageable));
+        }
 
     @Operation(summary = "Find users by role (paginated)")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/search/by-role")
     public ResponseEntity<Page<UserResponseDTO>> getByRolePaged(
-            @RequestParam String role,
-            Pageable pageable
-    ) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "role,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam String role) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(userService.getByRolePaged(role, pageable));
     }
 
@@ -139,16 +159,35 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/search/by-active")
     public ResponseEntity<Page<UserResponseDTO>> getByActivePaged(
-            @RequestParam Boolean active,
-            Pageable pageable
-    ) {
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "active,asc")
+            @RequestParam(required = false) String sort,
+
+            @RequestParam Boolean active) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(userService.getByActivePaged(active, pageable));
     }
 
     @Operation(summary = "List users (paginated)")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/paged")
-    public ResponseEntity<Page<UserResponseDTO>> getAllPaged(Pageable pageable) {
+    public ResponseEntity<Page<UserResponseDTO>> getAllPaged(
+            @Parameter(description = "Page number (0-based)", example = "0")
+            @RequestParam(defaultValue = "0") int pageNumber,
+
+            @Parameter(description = "Number of items per page", example = "10")
+            @RequestParam(defaultValue = "10") int size,
+
+            @Parameter(description = "Sorting criteria: property,asc|desc", example = "email,asc")
+            @RequestParam(required = false) String sort) {
+
+        Pageable pageable = PaginationUtil.createPageable(pageNumber, size, sort);
         return ResponseEntity.ok(userService.getAllPaged(pageable));
     }
 }
