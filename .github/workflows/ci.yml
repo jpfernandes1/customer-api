@@ -31,7 +31,7 @@
          run: mvn checkstyle:check
 
        - name: Run tests with coverage
-         run: mvn clean test jacoco:report
+         run: mvn clean test jacoco:report -Dspring.profiles.active=test
 
        # - name: SonarCloud analysis  # ⏸️ Removido temporariamente
        #   run: mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
