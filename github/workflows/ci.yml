@@ -1,0 +1,48 @@
+ # Fluxo CI/CD Completo
+ # 1. Developer faz push
+ # 2. GitHub Actions roda automaticamente
+ # 3. Spotless formata código
+ # 4. Checkstyle valida padrões
+ # 5. Tests + JaCoCo (cobertura)
+ # 6. SonarCloud analisa qualidade
+ # 7. Build do Docker image
+ # 8. Deploy (se tudo passar)
+
+ name: Full Pipeline
+
+ on: [push, pull_request]
+
+ jobs:
+   quality:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v4
+       - name: Set up JDK 21
+         uses: actions/setup-java@v3
+         with:
+           java-version: '21'
+           distribution: 'temurin'
+           cache: 'maven'  # ✅ Cache do Maven para builds mais rápidos
+
+       - name: Format code
+         run: mvn spotless:apply
+
+       - name: Check style
+         run: mvn checkstyle:check
+
+       - name: Run tests with coverage
+         run: mvn clean test jacoco:report
+
+       # - name: SonarCloud analysis  # ⏸️ Removido temporariamente
+       #   run: mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+       - name: Build Docker image
+         run: docker build -t customer-api:latest .
+
+       - name: Test Docker container
+         run: |
+           docker run -d -p 8080:8080 --name test-container customer-api:latest
+           sleep 15  # Espera a aplicação iniciar
+           docker ps
+           curl -f http://localhost:8080/actuator/health || exit 1
+           docker stop test-container
