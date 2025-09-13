@@ -34,6 +34,11 @@ Esta API foi desenvolvida seguindo os princípios RESTful e as melhores prática
 - **Springdoc OpenAPI** - Documentação Swagger
 - **JUnit 5 & Mockito** - Testes unitários e de integração
 
+## 🚀 Acesso à API em Servidor:
+
+[Clique aqui](https://customer-api-1-33hn.onrender.com/swagger-ui.html) Para acesar;
+
+Disponível até 04/10.
 
 ## 🚀 Instalação e Execução
 

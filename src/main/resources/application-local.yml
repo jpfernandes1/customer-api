@@ -1,6 +1,0 @@
-# If it was a real project, this file would not be uploaded
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/customer_api
-    username: postgres
-    password: admin

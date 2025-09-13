@@ -1,16 +1,17 @@
-# Configuration dev local
-
 spring:
   application:
     name: customer-api
 
   datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/customer_api}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
-    # url, username and password defined on application-local.yml
+
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: ${JPA_DDL_AUTO:none} # 'validate' para Docker, 'none' para IDE
       format_sql: true
 
   flyway:
@@ -18,8 +19,6 @@ spring:
     baseline-on-migrate: true
     locations: classpath:/db/migration
 
-  config:
-    import: optional:application-local.yml  # local file with credentials
   web:
     cors:
       allowed-origins: "http://localhost:3000, http://localhost:8080"
@@ -27,23 +26,14 @@ spring:
       allowed-headers: "*"
       allow-credentials: true
 
-
-logging:
-  level:
-    org.flyway: DEBUG
-
-# JWT Configuration
-
 jwt:
-  secret: MinhaChaveSuperSecreta123456abcde
+  secret: ${JWT_SECRET:MinhaChaveSuperSecreta123456abcde}
   expiration: 3600000
 
 springdoc:
-  # Main Configurations
   api-docs:
     enabled: true
     path: /v3/api-docs
-  
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
@@ -53,15 +43,10 @@ springdoc:
     filter: true
     tags-sorter: alpha
     operations-sorter: alpha
-
-  
-  # View Settings
   default-produces-media-type: application/json
   default-consumes-media-type: application/json
 
-  spring:
-    security:
-      oauth2:
-        resource server:
-          jwt:
-            issuer-uri: http://localhost:8080
+logging:
+  level:
+    org.flyway: DEBUG
+    com.neoaplicacoes: INFO
