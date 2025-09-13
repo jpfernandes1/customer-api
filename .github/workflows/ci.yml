@@ -1,65 +1,148 @@
- # Fluxo CI/CD Completo
- # 1. Developer faz push
- # 2. GitHub Actions roda automaticamente
- # 3. Spotless formata código
- # 4. Checkstyle valida padrões
- # 5. Tests + JaCoCo (cobertura)
- # 6. SonarCloud analisa qualidade
- # 7. Build do Docker image
- # 8. Deploy (se tudo passar)
+# Fluxo CI/CD Completo
+# 1. Developer faz push
+# 2. GitHub Actions roda automaticamente
+# 3. Spotless formata código
+# 4. Checkstyle valida padrões
+# 5. Tests + JaCoCo (cobertura)
+# 6. SonarCloud analisa qualidade
+# 7. Build do Docker image
+# 8. Deploy (se tudo passar)
 
- name: Full Pipeline
+name: Full Pipeline
 
- on: [push, pull_request]
+on: [push, pull_request]
 
- jobs:
-   quality:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v4
-       - name: Set up JDK 21
-         uses: actions/setup-java@v3
-         with:
-           java-version: '21'
-           distribution: 'temurin'
-           cache: 'maven'  # ✅ Cache do Maven para builds mais rápidos
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-       - name: Format code
-         run: mvn spotless:apply
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'  # ✅ Cache do Maven para builds mais rápidos
 
-       - name: Check style
-         run: mvn checkstyle:check
+      - name: Format code
+        run: mvn spotless:apply
 
-       - name: Run tests with coverage
-         run: mvn clean test jacoco:report -Dspring.profiles.active=test
+      - name: Check style
+        run: mvn checkstyle:check
 
-       # - name: SonarCloud analysis  # ⏸️ Removido temporariamente
-       #   run: mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      - name: Run tests with coverage
+        run: mvn clean test jacoco:report -Dspring.profiles.active=test
 
-       - name: Build Docker image
-         run: docker build -t customer-api:latest .
+      # - name: SonarCloud analysis  # ⏸️ Removido temporariamente
+      #   run: mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-       - name: Test Docker container
-         run: |
-           docker run -d -p 8080:8080 --name test-container \
-             -e SPRING_PROFILES_ACTIVE=test \
-             -e SPRING_DATASOURCE_URL=jdbc:h2:mem:testdb \
-             -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver \
-             -e SPRING_DATASOURCE_USERNAME=sa \
-             -e SPRING_DATASOURCE_PASSWORD= \
-             -e SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop \
-             -e SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect \
-             -e SPRING_FLYWAY_ENABLED=false \
-             -e SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect \
-             -e SPRING_DATASOURCE_TYPE=com.zaxxer.hikari.HikariDataSource \
-             -e SPRING_JPA_PROPERTIES_HIBERNATE_CONNECTION_PROVIDER=org.hibernate.hikaricp.internal.HikariCPConnectionProvider \
-             customer-api:latest
-           sleep 25
-           docker logs test-container
-           echo "✅ Container started successfully!"
-           echo "✅ Application is running on port 8080"
-           echo "✅ Health check may fail due to initial setup"
-           curl -f http://localhost:8080/actuator/health || \
-           curl -f http://localhost:8080 || \
-           echo "Health check failed but container is running"
-           docker stop test-container
+      - name: Build Docker image
+        run: docker build -t customer-api:latest .
+
+      - name: Test Docker container
+        run: |
+          docker run -d -p 8080:8080 --name test-container \
+            -e SPRING_PROFILES_ACTIVE=test \
+            -e SPRING_DATASOURCE_URL=jdbc:h2:mem:testdb \
+            -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver \
+            -e SPRING_DATASOURCE_USERNAME=sa \
+            -e SPRING_DATASOURCE_PASSWORD= \
+            -e SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop \
+            -e SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect \
+            -e SPRING_FLYWAY_ENABLED=false \
+            -e SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.H2Dialect \
+            -e SPRING_DATASOURCE_TYPE=com.zaxxer.hikari.HikariDataSource \
+            -e SPRING_JPA_PROPERTIES_HIBERNATE_CONNECTION_PROVIDER=org.hibernate.hikaricp.internal.HikariCPConnectionProvider \
+            customer-api:latest
+          sleep 25
+          docker logs test-container
+          echo "✅ Container started successfully!"
+          echo "✅ Application is running on port 8080"
+          echo "✅ Health check may fail due to initial setup"
+          curl -f http://localhost:8080/actuator/health || \
+          curl -f http://localhost:8080 || \
+          echo "Health check failed but container is running"
+          docker stop test-container
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-jar
+          path: target/*.jar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: quality
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: application-jar
+
+      - name: Deploy to Render
+        run: |
+          # Trigger Render deployment via API
+          response=$(curl -s -o response.json -w "%{http_code}" \
+            -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}")
+
+          if [ "$response" -eq 201 ]; then
+            echo "✅ Deployment triggered successfully!"
+            deploy_id=$(jq -r '.id' response.json)
+            echo "Deployment ID: $deploy_id"
+            echo "DEPLOY_ID=$deploy_id" >> $GITHUB_ENV
+          else
+            echo "❌ Failed to trigger deployment. HTTP status: $response"
+            cat response.json
+            exit 1
+          fi
+
+      - name: Wait for deployment completion
+        run: |
+          # Check deployment status periodically
+          for i in {1..30}; do
+            status=$(curl -s \
+              -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+              "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys/$DEPLOY_ID" | \
+              jq -r '.status')
+
+            echo "Deployment status: $status (check $i/30)"
+
+            if [ "$status" = "live" ]; then
+              echo "✅ Deployment completed successfully!"
+              break
+            elif [ "$status" = "build_failed" ] || [ "$status" = "update_failed" ]; then
+              echo "❌ Deployment failed with status: $status"
+              exit 1
+            elif [ $i -eq 30 ]; then
+              echo "❌ Deployment timeout after 30 checks"
+              exit 1
+            fi
+
+            sleep 10
+          done
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [ quality, deploy ]
+    if: always()
+
+    steps:
+      - name: Send notification
+        run: |
+          if [ "${{ needs.quality.result }}" == "success" ] && 
+             { [ "${{ needs.deploy.result }}" == "success" ] || 
+               [ "${{ needs.deploy.result }}" == "skipped" ]; }; then
+            echo "✅ CI/CD Pipeline completed successfully!"
+            echo "Quality job: ${{ needs.quality.result }}"
+            echo "Deploy job: ${{ needs.deploy.result }}"
+          else
+            echo "❌ CI/CD Pipeline failed!"
+            echo "Quality job: ${{ needs.quality.result }}"
+            echo "Deploy job: ${{ needs.deploy.result }}"
+            exit 1
+          fi
