@@ -5,8 +5,9 @@
 # 4. Checkstyle valida padrões
 # 5. Tests + JaCoCo (cobertura)
 # 6. SonarCloud analisa qualidade
-# 7. Build do Docker image
-# 8. Deploy (se tudo passar)
+# 7. Build do JAR aplicação
+# 8. Build do Docker image
+# 9. Deploy (se tudo passar)
 
 name: Full Pipeline
 
@@ -36,6 +37,10 @@ jobs:
 
       # - name: SonarCloud analysis  # ⏸️ Removido temporariamente
       #   run: mvn sonar:sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      # Build do JAR
+      - name: Build application JAR
+        run: mvn package -DskipTests  # Gerar o JAR sem rodar testes novamente
 
       - name: Build Docker image
         run: docker build -t customer-api:latest .
